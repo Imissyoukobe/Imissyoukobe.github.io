@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS8_0143的游戏区 - Ciallo~</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9933;
+            --secondary-color: #5096ff;
+            --dark-bg: rgba(12, 29, 51, 0.92);
+            --light-bg: rgba(255, 255, 255, 0.85);
+            --text-light: #e0e0e0;
+            --text-dark: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        
+        body {
+            background: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            background-color: var(--dark-bg);
+        }
+        
+        /* 深色模式 */
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            background-blend-mode: multiply;
+        }
+        
+        /* 浅色模式 */
+        body.light-mode {
+            background-color: var(--light-bg);
+            background-blend-mode: lighten;
+            color: var(--text-dark);
+            background-image: url('https://img.freepik.com/premium-photo/abstract-white-gradient-background_23-2148842043.jpg');
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 30px;
+            background: rgba(20, 40, 70, 0.7);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-toggle.light-mode {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        
+        .toggle-switch {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle.light-mode .toggle-switch {
+            transform: translateX(30px);
+            background: #d98c33;
+        }
+        
+        .theme-icon {
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .moon-icon {
+            left: 8px;
+            color: #a0c8ff;
+        }
+        
+        .sun-icon {
+            right: 8px;
+            color: #ff9933;
+        }
+        
+        /* 主内容区 - 调整为1920px宽度 */
+        .container {
+            max-width: 1920px; /* 改为1920px */
+            margin: 0 auto;
+            padding: 5rem 4rem 3rem; /* 增加内边距 */
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .title {
+            font-size: 3.2rem; /* 增大标题字体 */
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 153, 51, 0.3);
+        }
+        
+        .light-mode .title {
+            background: linear-gradient(45deg, #b87333, #d98c33);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem; /* 增大副标题字体 */
+            color: #a0c8ff;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        
+        .light-mode .subtitle {
+            color: #6a5d4d;
+        }
+        
+        /* 游戏展示 - 调整为横向布局 */
+        .games-container {
+            display: grid;
+            grid-template-columns: 1fr; /* 初始为单列 */
+            gap: 2rem;
+        }
+        
+        @media (min-width: 1920px) {
+            .games-container {
+                grid-template-columns: repeat(1, 1fr); /* 大屏幕下单列显示 */
+                flex-direction: row;
+            }
+        }
+        
+        .game-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem; /* 增加底部间距 */
+        }
+        
+        @media (min-width: 768px) {
+            .game-section {
+                flex-direction: row;
+            }
+        }
+        
+        /* 图片容器 - 设置1920*1080尺寸 */
+        .game-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); /* 增强阴影效果 */
+            border: 3px solid rgba(255, 204, 51, 0.4); /* 增强边框效果 */
+            position: relative;
+            width: 100%; /* 100%宽度 */
+            height: 1080px; /* 固定高度1080px */
+        }
+        
+        .light-mode .game-image {
+            border: 3px solid rgba(184, 115, 51, 0.4);
+        }
+        
+        .game-image img {
+            width: 100%; /* 图片宽度100% */
+            height: 100%; /* 图片高度100% */
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .game-image:hover img {
+            transform: scale(1.03);
+        }
+        
+        .game-image::before {
+            content: '';
+            position: absolute;
+            top: -3px; /* 匹配边框宽度 */
+            left: -3px; /* 匹配边框宽度 */
+            right: -3px; /* 匹配边框宽度 */
+            bottom: -3px; /* 匹配边框宽度 */
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33, #0a1428, #5096ff);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 18px; /* 匹配边框圆角 */
+            animation: gradient-border 6s ease infinite;
+        }
+        
+        .light-mode .game-image::before {
+            background: linear-gradient(45deg, #d98c33, #b87333, #f0f0f0, #5096ff);
+        }
+        
+        @keyframes gradient-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .game-content {
+            flex: 1;
+            background: rgba(20, 40, 70, 0.5);
+            border-radius: 15px;
+            padding: 3rem; /* 增加内边距 */
+            border: 1px solid rgba(80, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+            width: 100%; /* 内容区100%宽度 */
+        }
+        
+        .light-mode .game-content {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            color: var(--text-dark);
+        }
+        
+        .game-title {
+            font-size: 2rem; /* 增大标题字体 */
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .light-mode .game-title {
+            color: #d98c33;
+        }
+        
+        .game-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 80px; /* 增长下划线长度 */
+            height: 3px; /* 增粗下划线 */
+            background: var(--primary-color);
+        }
+        
+        .light-mode .game-title::after {
+            background: #d98c33;
+        }
+        
+        .game-desc {
+            font-size: 1.1rem; /* 增大描述字体 */
+            line-height: 2; /* 增加行高 */
+            margin-bottom: 1.5rem;
+            color: #c0d5f0;
+        }
+        
+        .light-mode .game-desc {
+            color: #555;
+        }
+        
+        .game-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem; /* 增加链接间距 */
+        }
+        
+        .game-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px; /* 增加图标间距 */
+            color: #a0c8ff;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem; /* 增大按钮尺寸 */
+            border-radius: 50px;
+            border: 1px solid #5096ff;
+            font-size: 1.1rem; /* 增大文字尺寸 */
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .game-link {
+            color: #b87333;
+            border-color: #b87333;
+        }
+        
+        .game-link:hover {
+            background: rgba(80, 150, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 增加悬停阴影 */
+        }
+        
+        .light-mode .game-link:hover {
+            background: rgba(184, 115, 51, 0.1);
+            color: #d98c33;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-link i {
+            font-size: 1rem; /* 增大图标尺寸 */
+        }
+        
+        /* 返回主页按钮样式 */
+        .back-to-home {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+            background-color: var(--primary-color);
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .back-to-home {
+            color: var(--text-dark);
+            background-color: #d98c33;
+            border-color: rgba(184, 115, 51, 0.5);
+        }
+        
+        .back-to-home:hover {
+            background-color: rgba(255, 153, 51, 0.9);
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-color);
+        }
+        
+        .light-mode .back-to-home:hover {
+            background-color: rgba(217, 140, 51, 0.9);
+        }
+        
+        .back-to-home i {
+            font-size: 1.2rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1920px) {
+            .game-image {
+                height: 800px; /* 小屏幕下减小高度 */
+            }
+            
+            .game-content {
+                padding: 2rem; /* 小屏幕下减小内边距 */
+            }
+            
+            .back-to-home {
+                padding: 10px 24px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .game-image {
+                height: 600px; /* 中等屏幕下进一步减小高度 */
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-section {
+                flex-direction: column;
+            }
+            
+            .game-image {
+                height: 500px; /* 手机屏幕下高度 */
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .theme-toggle {
+                top: 20px;
+            }
+            
+            .back-to-home {
+                bottom: 30px;
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 4rem 1.5rem 2rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .game-image {
+                height: 300px; /* 小屏手机高度 */
+            }
+            
+            .game-content {
+                padding: 1.5rem;
+            }
+            
+            .game-title {
+                font-size: 1.5rem;
+            }
+            
+            .game-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .back-to-home {
+                bottom: 20px;
+                padding: 6px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle dark-mode" id="themeToggle">
+        <div class="toggle-switch"></div>
+        <div class="theme-icon moon-icon"><i class="fas fa-moon"></i></div>
+        <div class="theme-icon sun-icon"><i class="fas fa-sun"></i></div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <section class="hero">
+            <h1 class="title">我爱玩的猎奇小游戏探索</h1>
+            <p class="subtitle">补药再骂我柚子厨了TAT</p>
+        </section>
+        
+        <div class="games-container">
+            <!-- 原神 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://fastcdn.mihoyo.com/content-v2/hk4e/125180/db0bf1fe50dd0da577501acceaf4b036_6829722162125743163.jpg" alt="原神">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">原神</h2>
+                    <p class="game-desc">
+                        《原神》是由米哈游开发的开放世界角色扮演游戏，玩家将扮演 "旅行者" 在元素交汇的提瓦特大陆展开冒险，探索七个国度的秘密。
+游戏以精美的二次元画风、电影级剧情演出和独特的元素战斗系统著称，水、火、雷等元素交互形成丰富的战斗策略（如 "超导" 碎冰、"蒸发" 增幅）。自 2020 年上线以来，《原神》凭借跨平台同步游玩（PC / 手机 / PS）和持续更新的版本内容（如稻妻、须弥等新区域），成为全球现象级游戏，累计营收超百亿美元。
+其音乐由伦敦爱乐乐团等顶级团队制作，主题曲《夜叉傩面》《天空之琴》等广受好评，游戏内场景如蒙德城风车草原、璃月港层岩巨渊均成为玩家打卡胜地。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://ys.mihoyo.com" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 官方网站
+                        </a>
+                        <a href="https://wiki.biligame.com/ys" class="game-link" target="_blank">
+                            <i class="fas fa-book"></i> 维基攻略
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 东方project -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://pic.netbian.com/uploads/allimg/190408/233343-15547376230fca.jpg" alt="东方project">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">东方project</h2>
+                    <p class="game-desc">
+                        《东方 Project》是由 ZUN（神主）独立创作的弹幕射击游戏系列，首部作品《东方灵异传》于 1997 年发布，目前正作已达 19 部。
+故事发生在被结界隔绝的 "幻想乡"，人类与妖怪、神明等超自然存在共存，玩家操控博丽灵梦、雾雨魔理沙等角色，通过密集华丽的弹幕对决解决幻想乡的异变。游戏以 "低速移动 + 高速弹幕" 的反差设计著称，每张符卡（Spell Card）拥有独特的弹幕图案（如樱花散弹、八卦阵图），考验玩家走位与预判能力。
+其庞大的二次创作文化堪称 ACG 界奇迹：全球超 10 万首同人音乐（如《Bad Apple!!》）、数万部漫画与小说，甚至衍生出 "东方凭依华"" 东方非想天则 " 等格斗作品。2022 年《东方弹幕神乐》登陆 Switch，标志着系列从独立游戏向主流市场的突破。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://thwiki.cc" class="game-link" target="_blank">
+                            <i class="fas fa-book"></i> THBWiki
+                        </a>
+                        <a href="https://store.steampowered.com/search/?term=touhou" class="game-link" target="_blank">
+                            <i class="fas fa-cart-plus"></i> Steam商店
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 千恋*万花 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://bkimg.cdn.bcebos.com/pic/b58f8c5494eef01f28315992effe9925bc317dbb?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" alt="千恋*万花">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">千恋*万花</h2>
+                    <p class="game-desc">
+                        《千恋 * 万花》是柚子社（Yuzu-Soft）2016 年推出的恋爱冒险游戏，作为 "柚子第九作"，以虚构的温泉之乡 "穗织" 为舞台，讲述高中生丛雨九十九意外拔出封印怨灵的 "丛雨丸"，与巫女茉美香、忍者小春等六位女主角展开的奇幻恋爱故事。
+游戏以 "和风幻想" 为特色，融合神社、温泉、忍术等元素，经典场景如 "丛雨祭" 的夜樱舞台、雪见樱的千年传说充满日式浪漫。柚子社标志性的 "废萌" 风格在此作中进阶，角色互动细腻（如茉美香紧张时会咬围巾），H-scene 采用 "动态立绘 + 场景渐变" 处理，兼顾观赏性与叙事性。
+2018 年 Steam 版追加全年龄内容后，凭借精美的 CG（共 120 余张）和轻松的剧情，成为国内 galgame 圈入门级作品，主题曲《花鳥風月》由歌手 Duca 演唱，治愈感十足。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://www.yuzu-soft.com/" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 官方网站
+                        </a>
+                        <a href="https://store.steampowered.com/app/1144400/_/" class="game-link" target="_blank">
+                            <i class="fas fa-cart-plus"></i> Steam购买
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 我的世界 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://bkimg.cdn.bcebos.com/pic/71cf3bc79f3df8dcd100c129e347658b4710b9128277?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" alt="我的世界">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">我的世界</h2>
+                    <p class="game-desc">
+                        《我的世界》（Minecraft）由瑞典开发者 Notch 于 2009 年创作，2014 年被微软收购后成为全球最畅销游戏（销量超 3 亿份）。
+游戏以 "方块建造" 为核心，玩家在随机生成的 3D 世界中采集资源、制作工具，既可在 "生存模式" 中对抗僵尸、末影龙等生物，也能在 "创造模式" 中用无限资源搭建建筑奇观。其开放性催生了庞大的模组生态：《工业 2》添加机械科技，《暮色森林》引入奇幻生物，《建筑大师》支持 CAD 导入，甚至衍生出 "红石计算机" 等硬核玩法。
+教育领域，《我的世界：教育版》被 100 多个国家的学校用于地理、历史、编程教学；文化领域，玩家在游戏中复现了故宫、霍格沃茨城堡等著名建筑。2023 年 Netflix 动画《我的世界：史蒂夫冒险》进一步扩大 IP 影响力，证明了这款 "看似简陋" 的游戏的无限可能。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://www.minecraft.net/zh-hans" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 官方网站
+                        </a>
+                        <a href="https://minecraft.fandom.com/zh/wiki/Minecraft_Wiki" class="game-link" target="_blank">
+                            <i class="fas fa-book"></i> 中文维基
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <a href="https://imissyoukobe.github.io/" class="back-to-home" target="_blank">
+        <i class="fas fa-home"></i>
+        <span>返回主页</span>
+    </a>
+    
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储中的主题设置
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.replace('dark-mode', 'light-mode');
+            themeToggle.classList.replace('dark-mode', 'light-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+                themeToggle.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                themeToggle.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // 图片悬停效果
+        const gameImages = document.querySelectorAll('.game-image');
+        gameImages.forEach(image => {
+            image.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.6)';
+            });
+            
+            image.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            });
+        });
+    </script>
+</body>
+</html>
