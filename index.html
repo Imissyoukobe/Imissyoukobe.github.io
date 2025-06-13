@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SS8_0143个人主页 - ciallo~</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+        
+        body {
+            background: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 深色模式 */
+        body.dark-mode {
+            background-color: rgba(12, 29, 51, 0.92);
+            background-blend-mode: multiply;
+        }
+        
+        /* 浅色模式 */
+        body.light-mode {
+            background-color: rgba(255, 255, 255, 0.85);
+            background-blend-mode: lighten;
+            color: #333;
+        }
+        
+        body.light-mode .section-title,
+        body.light-mode .title,
+        body.light-mode .subtitle {
+            color: #0a1428;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-mode .title {
+            background: linear-gradient(45deg, #b87333, #d98c33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        body.light-mode .skill-card,
+        body.light-mode .project-card {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+        
+        body.light-mode .btn-secondary {
+            color: #0a1428;
+            border-color: #b87333;
+        }
+        
+        body.light-mode .social-link {
+            background: rgba(184, 115, 51, 0.15);
+            color: #b87333;
+        }
+        
+        body.light-mode .highlight {
+            color: #d98c33;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 30px;
+            background: rgba(20, 40, 70, 0.7);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-toggle.light-mode {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        
+        .toggle-switch {
+            width: 22px;
+            height: 22px;
+            background: #ffcc33;
+            border-radius: 50%;
+            position: absolute;
+            left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle.light-mode .toggle-switch {
+            transform: translateX(30px);
+            background: #d98c33;
+        }
+        
+        .theme-icon {
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .moon-icon {
+            left: 8px;
+            color: #a0c8ff;
+        }
+        
+        .sun-icon {
+            right: 8px;
+            color: #ff9933;
+        }
+        
+        /* 顶部导航 */
+        header {
+            background: rgba(12, 29, 51, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(80, 150, 255, 0.3);
+        }
+        
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(184, 115, 51, 0.3);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            color: #ffcc33;
+            font-size: 2.5rem;
+        }
+        
+        body.light-mode .logo-icon {
+            color: #d98c33;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffcc33, #ff9933);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 204, 51, 0.3);
+        }
+        
+        body.light-mode .logo-text {
+            background: linear-gradient(45deg, #b87333, #d98c33);
+        }
+        
+        nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        
+        nav a {
+            color: #a0c8ff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        body.light-mode nav a {
+            color: #b87333;
+        }
+        
+        nav a:hover {
+            color: #ffcc33;
+            background: rgba(80, 150, 255, 0.1);
+        }
+        
+        body.light-mode nav a:hover {
+            color: #d98c33;
+            background: rgba(184, 115, 51, 0.1);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffcc33);
+            transition: width 0.3s ease;
+        }
+        
+        body.light-mode nav a::after {
+            background: linear-gradient(90deg, transparent, #d98c33);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* 主内容区 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 5rem;
+        }
+        
+        .profile {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-image {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 204, 51, 0.3);
+            position: relative;
+        }
+        
+        body.light-mode .profile-image {
+            border: 2px solid rgba(184, 115, 51, 0.3);
+        }
+        
+        .profile-image img {
+            width: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .profile-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .profile-image::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffcc33, #ff9933, #0a1428, #5096ff);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 12px;
+            animation: gradient-border 4s ease infinite;
+        }
+        
+        body.light-mode .profile-image::before {
+            background: linear-gradient(45deg, #d98c33, #b87333, #f0f0f0, #5096ff);
+        }
+        
+        @keyframes gradient-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .intro {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .title {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ffcc33, #ff9933);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 153, 51, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a0c8ff;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+        
+        body.light-mode .subtitle {
+            color: #6a5d4d;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: #c0d5f0;
+        }
+        
+        body.light-mode .description {
+            color: #4a4a4a;
+        }
+        
+        .highlight {
+            color: #ffcc33;
+            font-weight: 600;
+        }
+        
+        body.light-mode .highlight {
+            color: #d98c33;
+        }
+        
+        /* 按钮样式 */
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #ff9933, #ffcc33);
+            color: #0a1428;
+            border: 2px solid #ff9933;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 153, 51, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #a0c8ff;
+            border: 2px solid #5096ff;
+        }
+        
+        body.light-mode .btn-secondary {
+            color: #b87333;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(80, 150, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(80, 150, 255, 0.3);
+        }
+        
+        body.light-mode .btn-secondary:hover {
+            background: rgba(184, 115, 51, 0.1);
+        }
+        
+        /* 技能部分 */
+        .section-title {
+            font-size: 2.2rem;
+            text-align: center;
+            margin: 4rem 0 3rem;
+            color: #ffcc33;
+            position: relative;
+        }
+        
+        body.light-mode .section-title {
+            color: #d98c33;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ffcc33, transparent);
+        }
+        
+        body.light-mode .section-title::after {
+            background: linear-gradient(90deg, transparent, #d98c33, transparent);
+        }
+        
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        
+        .skill-card {
+            background: rgba(20, 40, 70, 0.5);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(80, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        body.light-mode .skill-card {
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+        
+        .skill-card:hover {
+            transform: translateY(-10px);
+            background: rgba(30, 60, 100, 0.6);
+            border-color: rgba(255, 204, 51, 0.4);
+        }
+        
+        body.light-mode .skill-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(184, 115, 51, 0.4);
+        }
+        
+        .skill-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: #ffcc33;
+        }
+        
+        body.light-mode .skill-icon {
+            color: #d98c33;
+        }
+        
+        .skill-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #a0c8ff;
+        }
+        
+        body.light-mode .skill-title {
+            color: #6a5d4d;
+        }
+        
+        .skill-desc {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #c0d5f0;
+        }
+        
+        body.light-mode .skill-desc {
+            color: #555;
+        }
+        
+        /* 项目展示 */
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        
+        .project-card {
+            background: rgba(20, 40, 70, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(80, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        body.light-mode .project-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            background: rgba(30, 60, 100, 0.6);
+            border-color: rgba(255, 204, 51, 0.4);
+        }
+        
+        body.light-mode .project-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(184, 115, 51, 0.4);
+        }
+        
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .project-content {
+            padding: 1.5rem;
+        }
+        
+        .project-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #ffcc33;
+        }
+        
+        body.light-mode .project-title {
+            color: #d98c33;
+        }
+        
+        .project-desc {
+            color: #c0d5f0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        body.light-mode .project-desc {
+            color: #555;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: rgba(10, 20, 40, 0.9);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(80, 150, 255, 0.3);
+            margin-top: 4rem;
+        }
+        
+        body.light-mode footer {
+            background: rgba(255, 255, 255, 0.85);
+            border-top: 1px solid rgba(184, 115, 51, 0.3);
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(80, 150, 255, 0.1);
+            border-radius: 50%;
+            color: #a0c8ff;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode .social-link {
+            background: rgba(184, 115, 51, 0.15);
+            color: #d98c33;
+        }
+        
+        .social-link:hover {
+            background: linear-gradient(45deg, #ff9933, #ffcc33);
+            color: #0a1428;
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            color: #7090c0;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        
+        body.light-mode .copyright {
+            color: #8a745c;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .buttons {
+                justify-content: center;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .theme-toggle {
+                top: 70px;
+                right: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle dark-mode" id="themeToggle">
+        <div class="toggle-switch"></div>
+        <div class="theme-icon moon-icon"><i class="fas fa-moon"></i></div>
+        <div class="theme-icon sun-icon"><i class="fas fa-sun"></i></div>
+    </div>
+    
+    <!-- 顶部导航 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-compass"></i></div>
+                <div class="logo-text">SS8_0143档案</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> 关于我</a></li>
+                    <li><a href="#"><i class="fas fa-gamepad"></i> 游戏世界</a></li>
+                    <li><a href="#"><i class="fas fa-route"></i> 铁路探索</a></li>
+                    <li><a href="#"><i class="fas fa-microchip"></i> 科技分享</a></li>
+                    <li><a href="#"><i class="fas fa-laptop-code"></i> 项目展示</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> 联系我</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <section class="hero">
+            <div class="profile">
+                <div class="profile-image">
+                    <img src="https://i1.hdslb.com/bfs/face/44732519d4f65b1658f9e1e25505a34b67d8edbe.jpg@150w_150h.jpg" alt="韶山8型电力机车，也是作者的本命车（0143），摄于广深铁路深圳东站">
+                </div>
+            </div>
+            <div class="intro">
+                <h1 class="title">你好，我是SS8_0143</h1>
+                <h2 class="subtitle">前端开发者 & 游戏爱好者 & 游走于广深港铁路和京广线的广州铁路迷 & 科技探索者</h2>
+                <p class="description">
+                    我是一名充满热情的<span class="highlight">前端开发工程师</span>，同时也是游戏、铁路和科技领域的深度爱好者。
+                    在提瓦特大陆的旅途中，我探索了蒙德、璃月、稻妻和须弥的每一个角落，
+                    并将这份探索精神融入我的编程工作和兴趣爱好中。
+                </p>
+                <p class="description">
+                    作为<span class="highlight">游戏玩家</span>，我热衷于游戏《原神》《东方Project》《千恋*万花》等作品；
+                    作为<span class="highlight">铁路迷</span>，我热衷于探索日本铁路系统和机车文化；
+                    作为<span class="highlight">科技爱好者</span>，我喜欢研究前沿技术和数码产品。
+                    在B站上，我分享这些领域的探索成果和个人见解。
+                </p>
+                
+                <div class="buttons">
+                    <a href="https://space.bilibili.com/1692572047?spm_id_from=333.1007.0.0" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-bilibili"></i> B站主页
+                    </a>
+                    <a href="https://space.bilibili.com/1692572047?spm_id_from=333.1007.0.0" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-video"></i> 最新视频
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <h2 class="section-title">我的三大爱好领域</h2>
+        
+        <div class="skills">
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3 class="skill-title">游戏世界</h3>
+                <p class="skill-desc">
+                    深度但是不敢沉迷《原神》《东方Project》《千恋*万花》等作品，
+                    并不擅长游戏机制研究、角色分析和剧情解析，
+                    并不制作游戏攻略和文化解读内容，只会做猎奇小视频。
+                </p>
+            </div>
+            
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-train"></i>
+                </div>
+                <h3 class="skill-title">铁路探索</h3>
+                <p class="skill-desc">
+                    不专注于日本铁路系统研究，可能熟悉JR各线路运营模式，
+                    热衷拍摄电力机车和动车组，分享铁路旅行见闻，
+                    特别关注新干线技术和通勤铁路文化。
+                </p>
+            </div>
+            
+            <div class="skill-card">
+                <div class="skill-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3 class="skill-title">科技分享</h3>
+                <p class="skill-desc">
+                    关注前端开发技术、数码产品和人工智能领域，
+                    不太擅长使用HTML5、CSS3和JavaScript，
+                    不分享技术教程、产品评测和科技行业观察。（还是那句话：猎奇小视频走起）
+                </p>
+            </div>
+        </div>
+        
+        <h2 class="section-title">游戏相关链接</h2>
+        
+        <div class="projects">
+            <div class="project-card">
+                <img src="https://fastcdn.mihoyo.com/static-resource-v2/2023/10/19/decde675d83a1b5b78fe05b2382b30ae_7623137438469696579.jpg" alt="原神攻略站" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">《原神》PC版下载</h3>
+                    <p class="project-desc">
+                        你没看错，直接把安装包下载到你的个人电脑里
+                    </p>
+                    <a href="https://autopatchcn.yuanshen.com/client_app/download/launcher/20250508182406_qVf7ZaTdA9uIdSJ7/mihoyo/yuanshen_setup_202504252217.exe" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> 安装包下载
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <img src="https://i1.hdslb.com/bfs/article/9b3d77c367c4eb0f0d6c6a6f43616f02db6d5a19.jpg@1192w.avif" alt="东方Project" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">东方Project专题</h3>
+                    <p class="project-desc">
+                        东方Project系列作品解析平台，包含角色设定、
+                        世界观梳理和游戏机制深度分析，适合新人入坑和老玩家回顾。
+                    </p>
+                    <a href="https://thwiki.cc/%E9%A6%96%E9%A1%B5" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> 了解东方
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <img src="https://i1.hdslb.com/bfs/article/0da44b6b3c2340eb896f6a5e49738279a098b332.png@1192w.avif" alt="千恋*万花" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">《千恋*万花》Steam页面</h3>
+                    <p class="project-desc">
+                        柚子社《千恋*万花》综合资源站，包含全角色路线攻略、
+                        CG收集和剧情解析，帮助玩家体验穗织的奇妙故事。
+                    </p>
+                    <a href="https://store.steampowered.com/app/1144400/_/?snr=1_7_7_151_150_1" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> Steam页面
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">铁路相关链接</h2>
+        
+        <div class="projects">
+            <div class="project-card">
+                <img src="https://www.jreast.co.jp/multi/nex/img/exterior_img01.jpg" alt="日本铁路" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">JR东日本官方网站</h3>
+                    <p class="project-desc">
+                        JR东日本官方网站，包含JR线路图、票价计算和
+                        乘车礼仪介绍，帮助旅行者规划铁路旅行路线。
+                    </p>
+                    <a href="https://www.jreast.co.jp/multi/zh-CHS/" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> 查看指南
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <img src="https://ts1.tc.mm.bing.net/th/id/R-C.d491e39ab067b33cc3e6bf8c982a4236?rik=HXmaA%2fSZL05fTg&riu=http%3a%2f%2fmokeitetsu.com%2fwp-content%2fuploads%2f2018%2f05%2f3b2f3c2583e2b3e839aa2771e0700fa6.jpg&ehk=dyCTQ1gY5FNQaHBHZ2IIX1JoAr3jscyb6PPnw%2fdv45s%3d&risl=&pid=ImgRaw&r=0" alt="新干线" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">山阳新干线技术解析</h3>
+                    <p class="project-desc">
+                        日本新干线技术发展历程，从0系到N700系的技术演进，
+                        包含速度提升、能耗优化和安全系统等深度内容。
+                    </p>
+                    <a href="https://www.westjr.co.jp/global/sc/train/shinkansen/sanyo-kyushu-shinkansen/technology/#:~:text=%E4%B8%8D%E4%BB%85%E5%A6%82%E6%AD%A4%EF%BC%8C%E4%B8%BA%E4%BA%86%E6%8F%90%E9%AB%98%E4%B9%98%E5%AE%A2%E6%97%85%E8%A1%8C%E7%9A%84%E8%88%92%E9%80%82%E5%BA%A6%EF%BC%8C%E9%AB%98%E9%93%81%E8%BF%98%E9%87%87%E7%94%A8%E4%BA%86%E5%8D%8A%E8%87%AA%E5%8A%A8%E5%BC%8F%E5%87%8F%E9%9C%87%E5%99%A8%E6%8A%80%E6%9C%AF%EF%BC%8C%E5%90%8C%E6%97%B6%E5%BC%95%E5%85%A5%E8%BD%A6%E5%8E%A2%E5%B9%B3%E7%A8%B3%E7%B3%BB%E7%BB%9F%E5%92%8C%E4%BD%8E%E5%99%AA%E5%A3%B0%E5%8F%97%E7%94%B5%E5%BC%93%EF%BC%8C%E4%BB%A5%E6%89%93%E9%80%A0%E5%87%BA%E7%8E%AF%E4%BF%9D%E8%8A%82%E8%83%BD%E7%9A%84%E5%88%97%E8%BD%A6%E3%80%82%201.%20%E7%BB%A7%E6%89%BF%E4%BA%86%20N700%20%E7%B3%BB%E5%88%97%E7%9A%84%E9%AB%98%E5%8F%AF%E9%9D%A0%E6%80%A7%E8%A1%A8%E7%8E%B0%20%E8%BD%A6%E8%BA%AB%E7%BB%93%E6%9E%84%E3%80%81%E4%B8%BB%E7%94%B5%E8%B7%AF%E3%80%81%E5%88%B9%E8%BD%A6%E7%B3%BB%E7%BB%9F%E7%AD%89%E4%B8%BB%E8%A6%81%E8%AE%BE%E5%A4%87%E5%9D%87%E6%B2%BF%E8%A2%AD%E8%87%AA%E5%B8%B8%E8%A7%84%E7%9A%84,N700%20%E7%B3%BB%E5%88%97%EF%BC%8C%E5%80%9F%E5%8A%A9%E5%8F%AF%E9%9D%A0%E7%9A%84%E6%8A%80%E6%9C%AF%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%8F%90%E9%AB%98%E5%AE%89%E5%85%A8%E6%80%A7%E3%80%82%202.%20%E5%85%AB%E8%8A%82%E8%BD%A6%E5%8E%A2%E7%9A%84%E6%95%B4%E4%BD%93%E5%BC%8F%E7%94%B5%E5%8A%A8%E8%BD%A6%E4%BD%93%20%E9%92%88%E5%AF%B9%E4%B9%9D%E5%B7%9E%E5%9C%B0%E5%8C%BA%E7%89%B9%E6%9C%89%E7%9A%84%E9%99%A1%E5%9D%A1%E9%93%81%E8%B7%AF%EF%BC%8C%E6%89%80%E6%9C%89%E5%85%AB%E8%8A%82%E8%BD%A6%E5%8E%A2%E5%9D%87%E9%85%8D%E5%A4%87%E4%BA%86%E7%94%B5%E5%8A%A8%E9%A9%AC%E8%BE%BE%EF%BC%8C%E4%BB%A5%E6%8F%90%E9%AB%98%E6%97%85%E8%A1%8C%E7%9A%84%E5%8F%AF%E9%9D%A0%E6%80%A7%E3%80%82%203.%20%E5%A2%9E%E5%BC%BA%E6%89%80%E6%9C%89%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%86%97%E4%BD%99%E6%80%A7" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> 技术解析
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <img src="https://www.japan-travel.cn/assets_c/2023/02/Tokyo_t_id83_2-thumb-1200x630-24475.jpg" alt="铁路摄影" class="project-img">
+                <div class="project-content">
+                    <h3 class="project-title">铁路摄影集</h3>
+                    <p class="project-desc">
+                        日本各地铁路摄影作品集合，包含东海道本线、
+                        信越本线和各私铁线路的机车与风景摄影。
+                    </p>
+                    <a href="https://pixabay.com/zh/photos/search/%E6%97%A5%E6%9C%AC%E9%93%81%E8%B7%AF/:" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i> 查看摄影集
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <h3>探索我的多元爱好</h3>
+            <p>欢迎通过以下平台关注我的动态，一起交流游戏、铁路和科技话题</p>
+            
+            <div class="social-links">
+                <a href="https://space.bilibili.com/1692572047" target="_blank" class="social-link">
+                    <i class="fab fa-bilibili"></i>
+                </a>
+                <a href="#" class="social-link">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.youtube.com/@Kim-Xiang" class="social-link">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://x.com/wx1145141919810" class="social-link">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            
+            <p class="copyright">
+                &copy; 2025 SS8_0143个人主页 | 游戏·铁路·科技爱好者 | ciallo~ヽ(￣▽￣)ﾉ
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储中的主题设置
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.replace('dark-mode', 'light-mode');
+            themeToggle.classList.replace('dark-mode', 'light-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+                themeToggle.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                themeToggle.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // 添加按钮悬停效果
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
