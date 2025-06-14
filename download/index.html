@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏资源站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9933;
+            --secondary-color: #5096ff;
+            --dark-bg: rgba(12, 29, 51, 0.92);
+            --light-bg: #7BAB4F;
+            --text-light: #e0e0e0;
+            --text-dark: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        
+        body {
+            background: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            background-color: var(--dark-bg);
+        }
+        
+        /* 深色模式 */
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            background-blend-mode: multiply;
+        }
+        
+        /* 浅色模式 */
+        body.light-mode {
+            background-color: var(--light-bg);
+            background-blend-mode: lighten;
+            color: var(--text-dark);
+            background-image: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png');
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 30px;
+            background: rgba(20, 40, 70, 0.7);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-toggle.light-mode {
+            background: rgba(123, 171, 79, 0.7);
+        }
+        
+        .toggle-switch {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle.light-mode .toggle-switch {
+            transform: translateX(30px);
+            background: #d98c33;
+        }
+        
+        .theme-icon {
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .moon-icon {
+            left: 8px;
+            color: #a0c8ff;
+        }
+        
+        .sun-icon {
+            right: 8px;
+            color: #ff9933;
+        }
+        
+        /* 主内容区 */
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 5rem 4rem 3rem;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .title {
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 153, 51, 0.3);
+        }
+        
+        .light-mode .title {
+            background: linear-gradient(45deg, #b87333, #d98c33);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #a0c8ff;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        
+        .light-mode .subtitle {
+            color: #333;
+        }
+        
+        /* 游戏展示区 */
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 1920px) {
+            .game-container {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+        
+        .game-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        @media (min-width: 768px) {
+            .game-section {
+                flex-direction: row;
+            }
+        }
+        
+        /* 游戏图片 */
+        .game-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 3px solid rgba(255, 204, 51, 0.4);
+            position: relative;
+            width: 100%;
+            height: 1080px;
+        }
+        
+        .light-mode .game-image {
+            border: 3px solid rgba(184, 115, 51, 0.4);
+        }
+        
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .game-image:hover img {
+            transform: scale(1.03);
+        }
+        
+        .game-image::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33, #0a1428, #5096ff);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 18px;
+            animation: gradient-border 6s ease infinite;
+        }
+        
+        .light-mode .game-image::before {
+            background: linear-gradient(45deg, #d98c33, #b87333, #f0f0f0, #5096ff);
+        }
+        
+        @keyframes gradient-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .game-content {
+            flex: 1;
+            background: rgba(20, 40, 70, 0.5);
+            border-radius: 15px;
+            padding: 3rem;
+            border: 1px solid rgba(80, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+            width: 100%;
+        }
+        
+        .light-mode .game-content {
+            background: rgba(123, 171, 79, 0.85);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            color: var(--text-dark);
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .light-mode .game-title {
+            color: #d98c33;
+        }
+        
+        .game-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+        
+        .light-mode .game-title::after {
+            background: #d98c33;
+        }
+        
+        .game-desc {
+            font-size: 1.1rem;
+            line-height: 2;
+            margin-bottom: 1.5rem;
+            color: #c0d5f0;
+        }
+        
+        .light-mode .game-desc {
+            color: #333;
+        }
+        
+        .game-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .game-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #a0c8ff;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid #5096ff;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .game-link {
+            color: #333;
+            border-color: #333;
+        }
+        
+        .game-link:hover {
+            background: rgba(80, 150, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .light-mode .game-link:hover {
+            background: rgba(184, 115, 51, 0.1);
+            color: #d98c33;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-link i {
+            font-size: 1rem;
+        }
+        
+        /* 返回主页按钮 */
+        .back-to-home {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+            background-color: var(--primary-color);
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .back-to-home {
+            color: #333;
+            background-color: #d98c33;
+            border-color: rgba(184, 115, 51, 0.5);
+        }
+        
+        .back-to-home:hover {
+            background-color: rgba(255, 153, 51, 0.9);
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-color);
+        }
+        
+        .light-mode .back-to-home:hover {
+            background-color: rgba(217, 140, 51, 0.9);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1920px) {
+            .game-image {
+                height: 800px;
+            }
+            
+            .game-content {
+                padding: 2rem;
+            }
+            
+            .back-to-home {
+                padding: 10px 24px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .game-image {
+                height: 600px;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-section {
+                flex-direction: column;
+            }
+            
+            .game-image {
+                height: 500px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .theme-toggle {
+                top: 20px;
+            }
+            
+            .back-to-home {
+                bottom: 30px;
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 4rem 1.5rem 2rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .game-image {
+                height: 300px;
+            }
+            
+            .game-content {
+                padding: 1.5rem;
+            }
+            
+            .game-title {
+                font-size: 1.5rem;
+            }
+            
+            .game-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .back-to-home {
+                bottom: 20px;
+                padding: 6px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle dark-mode" id="themeToggle">
+        <div class="toggle-switch"></div>
+        <div class="theme-icon moon-icon"><i class="fas fa-moon"></i></div>
+        <div class="theme-icon sun-icon"><i class="fas fa-sun"></i></div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <section class="hero">
+            <h1 class="title">游戏资源站</h1>
+            <p class="subtitle">提供高品质游戏资源下载</p>
+        </section>
+        
+        <div class="game-container">
+            <!-- 原神 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://fastcdn.mihoyo.com/content-v2/hk4e/125180/db0bf1fe50dd0da577501acceaf4b036_6829722162125743163.jpg" alt="原神游戏截图">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">原神</h2>
+                    <p class="game-desc">
+                        《原神》是由米哈游研发的一款开放世界冒险游戏，故事发生在名为"提瓦特"的幻想世界，玩家将扮演名为"旅行者"的神秘角色，在自由的旅行中邂逅性格各异、能力独特的同伴们，和他们一起击败强敌，找回失散的亲人，同时逐步发掘"原神"的真相。
+                    </p>
+                    <p class="game-desc">
+                        游戏拥有精美的3D画面、丰富的角色养成系统和扣人心弦的剧情。玩家可以在开放世界中自由探索，收集各种资源，完成任务和挑战。游戏还支持多人联机模式，让玩家可以与好友一起冒险。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://ys.mihoyo.com" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 官方网站
+                        </a>
+                        <a href="https://autopatchcn.yuanshen.com/client_app/download/launcher/20250508182406_qVf7ZaTdA9uIdSJ7/mihoyo/yuanshen_setup_202504252217.exe" class="game-link download-btn" data-game="genshin">
+                            <i class="fas fa-download"></i> 下载资源
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 东方Project 东方永夜抄 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://pic.netbian.com/uploads/allimg/190408/233343-15547376230fca.jpg" alt="东方永夜抄游戏截图">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">东方永夜抄</h2>
+                    <p class="game-desc">
+                        《东方永夜抄》是由日本同人社团上海爱丽丝幻乐团制作的弹幕射击游戏，是《东方Project》系列的第8作。游戏讲述了幻想乡因月之民的干预而陷入永夜的故事，玩家将扮演博丽灵梦、雾雨魔理沙等角色，与月之民展开战斗，恢复幻想乡的正常秩序。
+                    </p>
+                    <p class="game-desc">
+                        游戏以其华丽的弹幕设计和挑战性的玩法而闻名，玩家需要在密集的弹幕中穿梭，躲避敌人的攻击并反击。游戏包含多种难度级别和角色可供选择，每个角色都有独特的能力和弹幕风格。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://thwiki.cc" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 中文维基
+                        </a>
+                        <a href="https://cloud.lilywhite.cc/s/4ZUW?path=%2F%E4%B8%9C%E6%96%B9Project%2F%E5%AE%98%E6%96%B9%E6%B8%B8%E6%88%8F%2F%E6%95%B4%E6%95%B0%E4%BD%9C" class="game-link download-btn" data-game="touhou">
+                            <i class="fas fa-download"></i> 下载资源
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 我的世界 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://bkimg.cdn.bcebos.com/pic/71cf3bc79f3df8dcd100c129e347658b4710b9128277?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" alt="我的世界游戏截图">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">我的世界</h2>
+                    <p class="game-desc">
+                        《我的世界》是一款由Mojang Studios开发的沙盒游戏，玩家可以在一个由方块组成的3D世界中自由创造和探索。游戏没有明确的目标，玩家可以根据自己的喜好选择建造、冒险、战斗、探索等多种玩法。
+                    </p>
+                    <p class="game-desc">
+                        游戏拥有无限的可能性，玩家可以建造任何他们能想象到的东西，从简单的房屋到复杂的机械装置。游戏还支持模组和自定义内容，让玩家可以进一步扩展游戏的功能和玩法。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://www.minecraft.net/zh-hans" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 官方网站
+                        </a>
+                        <a href="https://x19.gdl.netease.com/MCLauncher_1.14.0.36188.exe?key1=be760665f260a606a09e97ccbad8e126&key2=684dc63c" class="game-link download-btn" data-game="minecraft">
+                            <i class="fas fa-download"></i> 下载资源
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 千恋*万花 -->
+            <div class="game-section">
+                <div class="game-image">
+                    <img src="https://bkimg.cdn.bcebos.com/pic/b58f8c5494eef01f28315992effe9925bc317dbb?x-bce-process=image/format,f_auto/watermark,image_d2F0ZXIvYmFpa2UyNzI,g_7,xp_5,yp_5,P_20/resize,m_lfit,limit_1,h_1080" alt="千恋万花游戏截图">
+                </div>
+                <div class="game-content">
+                    <h2 class="game-title">千恋*万花</h2>
+                    <p class="game-desc">
+                        《千恋*万花》是由柚子社制作的一款恋爱冒险游戏，讲述了主人公柳野惠辅为了继承家业而回到阔别十年的故乡，在那里遇到了各种各样的女孩，并与她们展开了一段段浪漫的故事。
+                    </p>
+                    <p class="game-desc">
+                        游戏以日本传统的温泉旅馆为背景，融合了日本传统文化元素和现代恋爱故事。玩家将通过选择不同的对话选项来影响剧情的发展，最终达成不同的结局。游戏拥有精美的角色设计和动人的音乐，为玩家带来一场视觉和听觉的盛宴。
+                    </p>
+                    <div class="game-links">
+                        <a href="https://www.yuzu-soft.com/" class="game-link" target="_blank">
+                            <i class="fas fa-globe"></i> 开发商官网
+                        </a>
+                        <a href="https://www.gfbzb.gov.cn/" class="game-link download-btn" data-game="yamato">
+                            <i class="fas fa-download"></i> 下载资源
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <a href="https://imissyoukobe.github.io/" class="back-to-home" target="_blank">
+        <i class="fas fa-home"></i>
+        <span>返回主页</span>
+    </a>
+    
+    <!-- 下载弹窗 -->
+    <div id="downloadModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md transform transition-all">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">选择下载资源</h3>
+            <div class="space-y-3" id="downloadOptions">
+                <!-- 下载选项将通过JS动态生成 -->
+            </div>
+            <button id="closeModal" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded transition-colors">
+                关闭
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储中的主题设置
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.replace('dark-mode', 'light-mode');
+            themeToggle.classList.replace('dark-mode', 'light-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+                themeToggle.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                themeToggle.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // 图片悬停效果
+        const gameImages = document.querySelectorAll('.game-image');
+        gameImages.forEach(image => {
+            image.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.6)';
+            });
+            
+            image.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            });
+        });
+        
+        // 下载按钮功能
+        const downloadButtons = document.querySelectorAll('.download-btn');
+        const downloadModal = document.getElementById('downloadModal');
+        const closeModal = document.getElementById('closeModal');
+        const downloadOptions = document.getElementById('downloadOptions');
+        
+        // 游戏下载选项数据
+        const gameDownloads = {
+            genshin: [
+                { name: '原神 PC 客户端', size: '15.2 GB', url: '#' },
+                { name: '原神 安卓客户端', size: '4.5 GB', url: '#' },
+                { name: '原神 资源包 v3.7', size: '2.8 GB', url: '#' }
+            ],
+            touhou: [
+                { name: '东方永夜抄 中文版', size: '120 MB', url: '#' },
+                { name: '东方永夜抄 高清补丁', size: '35 MB', url: '#' },
+                { name: '东方永夜抄 音乐集', size: '85 MB', url: '#' }
+            ],
+            minecraft: [
+                { name: '我的世界 Java 版', size: '256 MB', url: '#' },
+                { name: '我的世界 基岩版', size: '420 MB', url: '#' },
+                { name: '我的世界 光影包合集', size: '1.2 GB', url: '#' }
+            ],
+            yamato: [
+                { name: '千恋*万花 中文版', size: '4.8 GB', url: '#' },
+                { name: '千恋*万花 原画集', size: '350 MB', url: '#' },
+                { name: '千恋*万花 原声音乐', size: '120 MB', url: '#' }
+            ]
+        };
+        
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const game = button.getAttribute('data-game');
+                const downloads = gameDownloads[game];
+                
+                // 清空并填充下载选项
+                downloadOptions.innerHTML = '';
+                downloads.forEach(item => {
+                    const option = document.createElement('a');
+                    option.href = item.url;
+                    option.className = 'block p-3 bg-gray-100 hover:bg-gray-200 rounded transition-colors flex justify-between items-center';
+                    option.innerHTML = `
+                        <div>
+                            <span class="font-medium">${item.name}</span>
+                        </div>
+                        <span class="text-sm text-gray-600">${item.size}</span>
+                    `;
+                    downloadOptions.appendChild(option);
+                });
+                
+                // 显示弹窗
+                downloadModal.classList.remove('hidden');
+                // 防止背景滚动
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeModal.addEventListener('click', () => {
+            downloadModal.classList.add('hidden');
+            // 恢复背景滚动
+            document.body.style.overflow = 'auto';
+        });
+        
+        // 点击弹窗外部关闭
+        downloadModal.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                downloadModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>
