@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轨道交通世界 - 广州地铁·JR东日本·中国铁路</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9933;
+            --secondary-color: #5096ff;
+            --dark-bg: rgba(12, 29, 51, 0.92);
+            --light-bg: rgba(255, 255, 255, 0.85);
+            --text-light: #e0e0e0;
+            --text-dark: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        
+        body {
+            background: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            background-color: var(--dark-bg);
+        }
+        
+        /* 深色模式 */
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            background-blend-mode: multiply;
+        }
+        
+        /* 浅色模式 */
+        body.light-mode {
+            background-color: var(--light-bg);
+            background-blend-mode: lighten;
+            color: var(--text-dark);
+            background-image: url('https://webstatic.mihoyo.com/upload/static-resource/2022/03/11/3d969796385dd37294976b899eb4077f_7175776786123210870.png');
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 30px;
+            background: rgba(20, 40, 70, 0.7);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .theme-toggle.light-mode {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        
+        .toggle-switch {
+            width: 22px;
+            height: 22px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle.light-mode .toggle-switch {
+            transform: translateX(30px);
+            background: #d98c33;
+        }
+        
+        .theme-icon {
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .moon-icon {
+            left: 8px;
+            color: #a0c8ff;
+        }
+        
+        .sun-icon {
+            right: 8px;
+            color: #ff9933;
+        }
+        
+        /* 主内容区 - 调整为1920px宽度 */
+        .container {
+            max-width: 1920px; /* 改为1920px */
+            margin: 0 auto;
+            padding: 5rem 4rem 3rem; /* 增加内边距 */
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .title {
+            font-size: 3.2rem; /* 增大标题字体 */
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 153, 51, 0.3);
+        }
+        
+        .light-mode .title {
+            background: linear-gradient(45deg, #b87333, #d98c33);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem; /* 增大副标题字体 */
+            color: #a0c8ff;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        
+        .light-mode .subtitle {
+            color: #6a5d4d;
+        }
+        
+        /* 交通系统展示 - 调整为横向布局 */
+        .transport-container {
+            display: grid;
+            grid-template-columns: 1fr; /* 初始为单列 */
+            gap: 2rem;
+        }
+        
+        @media (min-width: 1920px) {
+            .transport-container {
+                grid-template-columns: repeat(1, 1fr); /* 大屏幕下单列显示 */
+                flex-direction: row;
+            }
+        }
+        
+        .transport-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem; /* 增加底部间距 */
+        }
+        
+        @media (min-width: 768px) {
+            .transport-section {
+                flex-direction: row;
+            }
+        }
+        
+        /* 图片容器 - 设置1920*1080尺寸 */
+        .transport-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); /* 增强阴影效果 */
+            border: 3px solid rgba(255, 204, 51, 0.4); /* 增强边框效果 */
+            position: relative;
+            width: 100%; /* 100%宽度 */
+            height: 1080px; /* 固定高度1080px */
+        }
+        
+        .light-mode .transport-image {
+            border: 3px solid rgba(184, 115, 51, 0.4);
+        }
+        
+        .transport-image img {
+            width: 100%; /* 图片宽度100% */
+            height: 100%; /* 图片高度100% */
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .transport-image:hover img {
+            transform: scale(1.03);
+        }
+        
+        .transport-image::before {
+            content: '';
+            position: absolute;
+            top: -3px; /* 匹配边框宽度 */
+            left: -3px; /* 匹配边框宽度 */
+            right: -3px; /* 匹配边框宽度 */
+            bottom: -3px; /* 匹配边框宽度 */
+            background: linear-gradient(45deg, var(--primary-color), #ffcc33, #0a1428, #5096ff);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 18px; /* 匹配边框圆角 */
+            animation: gradient-border 6s ease infinite;
+        }
+        
+        .light-mode .transport-image::before {
+            background: linear-gradient(45deg, #d98c33, #b87333, #f0f0f0, #5096ff);
+        }
+        
+        @keyframes gradient-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .transport-content {
+            flex: 1;
+            background: rgba(20, 40, 70, 0.5);
+            border-radius: 15px;
+            padding: 3rem; /* 增加内边距 */
+            border: 1px solid rgba(80, 150, 255, 0.2);
+            backdrop-filter: blur(5px);
+            width: 100%; /* 内容区100%宽度 */
+        }
+        
+        .light-mode .transport-content {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(184, 115, 51, 0.2);
+            color: var(--text-dark);
+        }
+        
+        .transport-title {
+            font-size: 2rem; /* 增大标题字体 */
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .light-mode .transport-title {
+            color: #d98c33;
+        }
+        
+        .transport-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 80px; /* 增长下划线长度 */
+            height: 3px; /* 增粗下划线 */
+            background: var(--primary-color);
+        }
+        
+        .light-mode .transport-title::after {
+            background: #d98c33;
+        }
+        
+        .transport-desc {
+            font-size: 1.1rem; /* 增大描述字体 */
+            line-height: 2; /* 增加行高 */
+            margin-bottom: 1.5rem;
+            color: #c0d5f0;
+        }
+        
+        .light-mode .transport-desc {
+            color: #555;
+        }
+        
+        .transport-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem; /* 增加链接间距 */
+        }
+        
+        .transport-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px; /* 增加图标间距 */
+            color: #a0c8ff;
+            text-decoration: none;
+            padding: 0.8rem 1.5rem; /* 增大按钮尺寸 */
+            border-radius: 50px;
+            border: 1px solid #5096ff;
+            font-size: 1.1rem; /* 增大文字尺寸 */
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .transport-link {
+            color: #b87333;
+            border-color: #b87333;
+        }
+        
+        .transport-link:hover {
+            background: rgba(80, 150, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* 增加悬停阴影 */
+        }
+        
+        .light-mode .transport-link:hover {
+            background: rgba(184, 115, 51, 0.1);
+            color: #d98c33;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .transport-link i {
+            font-size: 1rem; /* 增大图标尺寸 */
+        }
+        
+        /* 返回主页按钮样式 */
+        .back-to-home {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+            background-color: var(--primary-color);
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .back-to-home {
+            color: var(--text-dark);
+            background-color: #d98c33;
+            border-color: rgba(184, 115, 51, 0.5);
+        }
+        
+        .back-to-home:hover {
+            background-color: rgba(255, 153, 51, 0.9);
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-color);
+        }
+        
+        .light-mode .back-to-home:hover {
+            background-color: rgba(217, 140, 51, 0.9);
+        }
+        
+        .back-to-home i {
+            font-size: 1.2rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1920px) {
+            .transport-image {
+                height: 800px; /* 小屏幕下减小高度 */
+            }
+            
+            .transport-content {
+                padding: 2rem; /* 小屏幕下减小内边距 */
+            }
+            
+            .back-to-home {
+                padding: 10px 24px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .transport-image {
+                height: 600px; /* 中等屏幕下进一步减小高度 */
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .transport-section {
+                flex-direction: column;
+            }
+            
+            .transport-image {
+                height: 500px; /* 手机屏幕下高度 */
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .theme-toggle {
+                top: 20px;
+            }
+            
+            .back-to-home {
+                bottom: 30px;
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 4rem 1.5rem 2rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .transport-image {
+                height: 300px; /* 小屏手机高度 */
+            }
+            
+            .transport-content {
+                padding: 1.5rem;
+            }
+            
+            .transport-title {
+                font-size: 1.5rem;
+            }
+            
+            .transport-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .back-to-home {
+                bottom: 20px;
+                padding: 6px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle dark-mode" id="themeToggle">
+        <div class="toggle-switch"></div>
+        <div class="theme-icon moon-icon"><i class="fas fa-moon"></i></div>
+        <div class="theme-icon sun-icon"><i class="fas fa-sun"></i></div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="container">
+        <section class="hero">
+            <h1 class="title">轨道交通世界</h1>
+            <p class="subtitle">探索广州地铁、JR东日本与中国铁路的魅力</p>
+        </section>
+        
+        <div class="transport-container">
+            <!-- 广州地铁 -->
+            <div class="transport-section">
+                <div class="transport-image">
+                    <img src="https://res.ditiee.com/forum/202106/20/090701ak3tghk9grv3vykq.jpeg" alt="广州地铁列车">
+                </div>
+                <div class="transport-content">
+                    <h2 class="transport-title">广州地铁</h2>
+                    <p class="transport-desc">
+                        广州地铁是服务于中国广东省广州市和珠江三角洲的城市轨道交通系统，首条线路于1997年6月28日开通，是中国大陆第四个开通并运营地铁的城市。截至2023年，广州地铁运营线路共16条，运营里程达621公里，位居中国第三、世界前五。
+                    </p>
+                    <p class="transport-desc">
+                        其线路网络以 “蜘蛛网状” 辐射全城，1 号线（黄色）连接荔湾与天河，3 号线（橙色）贯穿城市中轴，日均客流量超 900 万人次，节假日峰值突破 1200 万。2010 年亚运会前开通的 APM 线（旅客自动输送系统）采用全自动无人驾驶技术，车厢透明设计成为观光亮点。2021 年开通的 18 号线时速达 160 公里，从南沙到天河仅需 30 分钟，刷新国内城市地铁速度纪录。
+作为珠三角轨道交通一体化核心，广州地铁与佛山地铁 7 条线路互联，未来还将延伸至东莞、中山等城市。其 “地铁 + 物业” 开发模式（如天河路商圈、万胜围 TOD）带动沿线经济，车站内岭南文化元素（如陈家祠站砖雕、农讲所站红砂岩）更成为城市文化名片。
+                    </p>
+                    <div class="transport-links">
+                        <a href="https://www.gzmtr.com/" class="transport-link" target="_blank">
+                            <i class="fas fa-globe"></i> 广州地铁官网
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- JR东日本 -->
+            <div class="transport-section">
+                <div class="transport-image">
+                    <img src="https://live.staticflickr.com/4494/24231477428_872c03eafc_b.jpg" alt="JR东日本">
+                </div>
+                <div class="transport-content">
+                    <h2 class="transport-title">JR东日本</h2>
+                    <p class="transport-desc">
+                        JR 东日本是日本 JR 集团中规模最大的铁路公司，运营范围覆盖关东、东北及中部北部，年客流量超 13 亿人次。其前身为日本国有铁道，1987 年民营化后拆分重组，目前拥有新干线、在来线、城市轨道及旅游服务全业态。
+                    </p>
+                    <p class="transport-desc">
+                        新干线网络以东京为中心呈放射状：东北新干线（E5 系 “隼号”）时速 320 公里，直达青森；山形新干线（E3 系 “翼号”）采用可变轨距技术，可在标准轨与窄轨间自动切换；上越新干线（E2 系）则以雪景线路闻名，冬季 “朱鹭号” 列车与越后妻有梯田相映成趣。在来线中，中央线 “梓号” 特急连接东京与松本，沿途穿越赤石山脉；京滨东北线日均运送通勤客超 120 万人次，高峰期 2 分钟一班的密度堪称世界之最。
+JR 东日本以 “极致准时” 著称，新干线平均延误时间不足 1 分钟，车站内 “发车音乐”（如东京站《四季》旋律）成为文化符号。其推出的 “青春 18 车票”（可无限次乘坐普通列车的优惠票）、“Resort Shinkansen” 观光专列（如带有露天展望台的 “悟” 号），将交通与旅游深度融合，每年吸引超千万游客。
+                    </p>
+                    <div class="transport-links">
+                        <a href="https://www.jreast.co.jp/" class="transport-link" target="_blank">
+                            <i class="fas fa-globe"></i> JR东日本官网
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 中国铁路 -->
+            <div class="transport-section">
+                <div class="transport-image">
+                    <img src="https://ts1.tc.mm.bing.net/th/id/R-C.511d4d222f246b085eab52774c015a95?rik=DBQPb7s7Xd8amw&riu=http%3a%2f%2fimg.cnwest.com%2fa%2f10001%2f202412%2f29%2fd19bfd0aff5d630220c8adf8ab634ec1.jpeg&ehk=EvHKFL0UcqEsWKHp7HZHt%2bX6xP%2fUxyP2%2fT0NwJAG9IE%3d&risl=&pid=ImgRaw&r=0" alt="中国铁路高铁">
+                </div>
+                <div class="transport-content">
+                    <h2 class="transport-title">中国铁路</h2>
+                    <p class="transport-desc">
+                        中国铁路是中国境内的铁路网络，是国家重要的基础设施、国民经济的大动脉和大众化的交通工具，在中国综合交通运输体系中处于骨干地位。截至2022年底，中国铁路营业里程达15.49万公里，其中高速铁路4.2万公里，位居世界第一。
+                    </p>
+                    <p class="transport-desc">
+                        高铁技术代表全球顶尖水平：CR400 系列 “复兴号” 时速 350 公里，采用自主研发的牵引传动系统和列车网络控制系统；2023 年开通的京雄城际铁路实现 “自动驾驶”，列车可自动调整速度、开关车门；青藏铁路格尔木至拉萨段穿越海拔 5072 米的唐古拉山口，是世界上海拔最高的铁路。普速铁路中，京九线连接香港与北京，成昆线被誉为 “人类征服自然的三大奇迹” 之一。
+中国铁路创造多项世界之最：京沪高铁年客流量超 2 亿人次，相当于英国总人口；港珠澳大桥铁路连接线实现 “桥隧一体化” 设计；中欧班列自 2011 年开行以来，已通达欧洲 25 国 217 个城市，成为 “一带一路” 重要纽带。12306 售票系统峰值每秒处理 1500 万次查询，春运期间单日售票量突破 1500 万张，展现了世界最大规模的客流组织能力。
+                    </p>
+                    <div class="transport-links">
+                        <a href="https://www.12306.cn/" class="transport-link" target="_blank">
+                            <i class="fas fa-globe"></i> 中国铁路官网
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 返回主页按钮 -->
+    <a href="https://imissyoukobe.github.io/" class="back-to-home" target="_blank">
+        <i class="fas fa-home"></i>
+        <span>返回主页</span>
+    </a>
+    
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // 检查本地存储中的主题设置
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.replace('dark-mode', 'light-mode');
+            themeToggle.classList.replace('dark-mode', 'light-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+                themeToggle.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                themeToggle.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // 图片悬停效果
+        const transportImages = document.querySelectorAll('.transport-image');
+        transportImages.forEach(image => {
+            image.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.6)';
+            });
+            
+            image.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            });
+        });
+    </script>
+</body>
+</html>
